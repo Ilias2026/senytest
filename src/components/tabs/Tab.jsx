@@ -1,8 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Tab = ({ name }) => {
+const Tab = ({ tab, active }) => {
     return (
-        <span>{name}</span>
+        <Link to={"/insight/" + tab._id} className={('button1' + (active ? ' active' : ''))}>
+            {tab.name}
+        </Link>
     )
 }
 

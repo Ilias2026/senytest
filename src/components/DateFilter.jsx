@@ -3,13 +3,19 @@ import { css } from "@emotion/react";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import formatDate from "../utils/formatDate";
+import useApp from "../hooks/useApp";
+import constaintsStyles from "../styles/constants";
+import date from "../utils/date";
+import useDate from "../hooks/useDate";
+import Icon from "./global/icons/Icon";
+import DateSVG from "../svg/DateSVG";
 
 export default function DateFilter({ onChange }) {
+  const [appState, setAppState] = useApp()
+  const [dateState, setDateState] = useDate();
   const [state, setState] = React.useState({
     dates: {
-      startDate: new Date(),
-      endDate: new Date(),
+      ...dateState,
       key: "dates",
     },
   });
@@ -45,13 +51,15 @@ export default function DateFilter({ onChange }) {
     });
   };
 
-  const deactivateDatePicker = (e) => {
-    let { target } = e;
-    do {
-      if (target && target === pickerRef.current) {
-        return false;
-      }
-    } while ((target = target && target.parentElement));
+  const deactivateDatePicker = (e, always = false) => {
+    if (!always) {
+      let { target } = e;
+      do {
+        if (target && target === pickerRef.current) {
+          return false;
+        }
+      } while ((target = target && target.parentElement));
+    }
     setState((prevState) => {
       return {
         ...prevState,
@@ -59,11 +67,17 @@ export default function DateFilter({ onChange }) {
       };
     });
   };
-  const _onChange = (data) => {
+  const _onChange = (e) => {
+    deactivateDatePicker(null, true)
+    setDateState(prevState => {
+      return {
+        ...prevState,
+        ...state.dates
+      }
+    })
     typeof onChange === "function" && onChange();
   };
 
-  React.useEffect(_onChange, [state]);
   React.useEffect(() => {
     document.addEventListener("click", deactivateDatePicker);
     return () => {
@@ -72,19 +86,27 @@ export default function DateFilter({ onChange }) {
   });
   return (
     <div className="datefilter" css={datefilterStyle} ref={pickerRef}>
-      <div css={inactiveStyle} onClick={activateDatePicker}>
-        <div className="dateDisplay">{formatDate(state.dates.startDate)}</div>-
-        <div className="dateDisplay">{formatDate(state.dates.endDate)}</div>
+      <div css={inactiveStyle} className={("button1" + (state.active ? " active" : ""))} onClick={activateDatePicker}>
+        <Icon>
+          <DateSVG />
+        </Icon>
+        <div className="dateDisplay">{date.formatDateShort(state.dates.startDate)}</div>-
+        <div className="dateDisplay">{date.formatDateShort(state.dates.endDate)}</div>
       </div>
       <div className="datepicker">
         {state.active ? (
-          <DateRangePicker
-            ranges={[state.dates]}
-            onChange={handleChange}
-            minDate={fixedInterval[0]}
-            maxDate={fixedInterval[1]}
-            showDateDisplay={false}
-          />
+          <>
+            <DateRangePicker
+              ranges={[state.dates]}
+              onChange={handleChange}
+              // minDate={fixedInterval[0]}
+              maxDate={fixedInterval[1]}
+              showDateDisplay={false}
+              color={constaintsStyles.colorOrange1}
+              rangeColors={[constaintsStyles.colorOrange1]}
+            />
+            <button className="button1" onClick={_onChange}>Apply</button>
+          </>
         ) : (
           <></>
         )}
@@ -96,11 +118,13 @@ export default function DateFilter({ onChange }) {
 const datefilterStyle = () => {
   return css`
     width: fit-content;
-    margin: 0 20px 0 auto;
+    margin: 0 0px 0 auto;
     & .datepicker {
       position: absolute;
       right: 20px;
       box-shadow: 0px 2px 4px 0px #ddd;
+      display: flex;
+      flex-direction: column;
     }
   `;
 };
@@ -113,8 +137,6 @@ const inactiveStyle = () => {
     cursor: pointer;
     margin: 10px 0px;
     padding: 5px 8px;
-    background-color: white;
-    border: 1px solid rgba(0, 0, 0, .3);
     & .dateDisplay {
       padding: 3px 5px;
     }

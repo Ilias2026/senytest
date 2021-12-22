@@ -1,18 +1,20 @@
 import { css } from '@emotion/react';
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import useApp from '../../hooks/useApp';
-import constaintsStyles from '../../styles/constants';
 import AddTabButton from './AddTabButton';
 import Tab from './Tab';
-const { lightShadow, colorOrange1, colorOrange2 } = constaintsStyles;
+
 const Tabs = ({ children }) => {
   const [appState, setAppState] = useApp()
+  const params = useParams()
+  const { _id } = params;
   return (
     <div>
       <div css={tabsStyle}>
         {
           Array.isArray(appState.tabs) && appState.tabs.map((tab, i) => (
-            <Tab key={i} name={tab.name} />
+            <Tab key={tab._id} tab={tab} active={_id === tab._id} />
           ))
         }
         <AddTabButton />
@@ -30,22 +32,6 @@ const tabsStyle = () => {
       justify-content: center;
       margin: 25px auto 15px;
       gap: 10px;
-      & > span, button {
-        padding: 8px 12px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        background-color: white;
-        ${lightShadow}
-        transition: .3s;
-        
-        &:hover {
-          border-color: ${colorOrange1};
-        }
-        &[active] {
-          border-color: ${colorOrange1};
-          background-color: ${colorOrange2};
-        }
-      }
     `;
 };
 

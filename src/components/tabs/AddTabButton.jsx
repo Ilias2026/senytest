@@ -1,23 +1,35 @@
 import React from 'react';
 import useApp from '../../hooks/useApp';
+import AddTabModal from './AddTabModal';
 
 const AddTabButton = () => {
+    const [state, setState] = React.useState({ modalVisible: false })
     const [appState, setAppState] = useApp()
     function handleClick() {
-        setAppState(prevState => {
-            const newState = { ...prevState };
-            if (!newState.tabs) {
-                newState.tabs = []
-            }
-            newState.tabs.push({
-                name: 'tab ' + Date.now()
-            })
-            return { ...newState }
-        })
+        showModal()
+    }
+
+    function alterModalVisibility(visible = false) {
+        setState(prevState => ({ ...prevState, modalVisible: visible }))
+    }
+
+    function showModal() {
+        alterModalVisibility(true)
+    }
+
+    function hideModal() {
+        alterModalVisibility(false)
     }
 
     return (
-        <button onClick={handleClick}>Add</button>
+        <>
+            <button className='button1' onClick={handleClick}>Add</button>
+            {
+                state.modalVisible ? (
+                    <AddTabModal onClose={hideModal} />
+                ) : (<></>)
+            }
+        </>
     )
 }
 

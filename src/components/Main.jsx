@@ -1,61 +1,54 @@
 import { css } from '@emotion/react';
 import React from 'react';
-import Insights from './Insights';
 import logo from '../logo-grey.png';
-import kpiScreen from '../kpi-screen.png';
 import DateFilter from './DateFilter';
-import Tabs from './tabs/Tabs';
+import { Routes, Route, } from 'react-router-dom';
+import Insights from './Insights/Insights';
+import constaintsStyles from '../styles/constants';
+import { Link } from 'react-router-dom';
+import Home from './Home';
+const { lightShadow, colorOrange1, colorOrange2, input, inputContainer } = constaintsStyles;
 
 const Main = () => {
-    return (
-        <div css={appStyle}>
-            <header>
-                <a
-                    href="https://athenian.co"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <img src={logo} alt="athenian-logo" />
-                </a>
-                <h1>Athenian WebApp Tech Assessment</h1>
-            </header>
-            <div className="body">
-                <DateFilter />
-                <div className="insights">
-                    <h2>Insights</h2>
-                    <Tabs>
-                        <Box metricName="X"></Box>
-                    </Tabs>
-                    <div className="control">
+  return (
+    <div css={appStyle}>
+      <header>
+        <Link to="/">
+          <img src={logo} alt="athenian-logo" />
+        </Link>
+        <h1>Athenian WebApp Tech Assessment</h1>
+      </header>
+      <div className="body">
+        <DateFilter />
+        <div className="insights">
+          <h2 className='title'>Insights</h2>
+          <Routes>
+            <Route exact path="/insight/:_id" element={<Insights />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+          <div className="control">
 
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  )
 }
 
-const Box = ({ metricName }) => {
-    return (
-        <div css={boxStyle}>
-            <button>X</button>
-            <h3>Insights for metric {metricName}</h3>
-            <Insights />
-            <img className="kpi" src={kpiScreen} alt="kpi" />
-        </div>
-    );
-};
-
-
-const lightShadow = `box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, .3);`
+const padding = 50;
 
 const appStyle = () => {
-    return css`
+  return css`
       width: 100%;
-      text-align: center;
+      height: calc(100vh - ${padding * 2}px);
+      overflow: auto;
       background: whitesmoke;
-      padding: 50px 0;
+      padding: ${padding}px 0;
   
+      & header {
+          text-align: center;
+      }
+
       & .body {
         width: clamp(90%, 900px, 100%);
         margin: 0 auto;
@@ -64,29 +57,33 @@ const appStyle = () => {
       & div.insights {
         padding: 30px 0 60px 0;
         ${lightShadow}
+        & .title {
+            text-align: center;
+        }
       }
-    `;
-};
 
-const boxStyle = () => {
-    return css`
-      width: clamp(75%, 800px, 100%);
-      margin: 0px auto;
-      text-align: center;
-      ${lightShadow}
-      background-color: white;
-  
-      & img.chart {
-        width: 45%;
-        height: 200px;
-        margin: 5px 5px;
+      & .button1 {
+        padding: 8px 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background-color: white;
+        color: black;
+        text-decoration: none;
+        ${lightShadow}
+        transition: border .3s;
+        
+        &:hover {
+          border-color: ${colorOrange1};
+        }
+        &.active {
+          border-color: ${colorOrange1};
+          background-color: ${colorOrange2};
+        }
       }
-  
-      & img.kpi {
-        width: 45%;
-        height: 50px;
-        margin: 5px 5px;
-      }
+
+
+      & ${inputContainer}
+      & ${input}
     `;
 };
 
