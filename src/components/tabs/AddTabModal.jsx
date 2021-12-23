@@ -5,10 +5,11 @@ import Modal from '../global/modal/Modal';
 import useApp from '../../hooks/useApp'
 import flake from '../../utils/flake';
 import addTab from '../../storage/addTab';
-import Icon from '../global/icons/Icon';
 import Tooltip from '../global/tooltips/Tooltip';
-import InfoSVG from '../../svg/InfoSVG';
 import { useNavigate } from 'react-router-dom';
+
+import Icon from '../global/icons/Icon';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons'
 
 const AddTabModal = ({ onClose }) => {
     const navigate = useNavigate()
@@ -83,9 +84,7 @@ const AddTabModal = ({ onClose }) => {
                                         }} />
                                     <div>{option.name}</div>
                                     <Tooltip message={option.tip} >
-                                        <Icon>
-                                            <InfoSVG />
-                                        </Icon>
+                                        <Icon icon={faQuestionCircle} color="#777" size={'.9em'} />
                                     </Tooltip>
                                 </label>
                             )

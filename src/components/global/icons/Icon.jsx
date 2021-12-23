@@ -1,22 +1,25 @@
 import { css } from '@emotion/react';
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const Icon = ({ children }) => {
+const Icon = (props) => {
+    const options = {
+        icon: props.icon,
+        color: props.color,
+    }
     return (
         <div css={iconStyle}>
-            {children}
+            <FontAwesomeIcon {...options} style={{
+                fontSize: props.size || '1em'
+            }} />
         </div>
     );
 }
 
 const iconStyle = () => {
     return css`
-            display: flex;
-            & svg {
-                width: 1.2em;
-                height: 1.2em;
-            }
-            `
+    font-size: 1.2em;
+    `
 }
 
 export default Icon;

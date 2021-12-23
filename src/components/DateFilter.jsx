@@ -8,7 +8,7 @@ import constaintsStyles from "../styles/constants";
 import date from "../utils/date";
 import useDate from "../hooks/useDate";
 import Icon from "./global/icons/Icon";
-import DateSVG from "../svg/DateSVG";
+import { faCalendar } from '@fortawesome/free-regular-svg-icons'
 
 export default function DateFilter({ onChange }) {
   const [appState, setAppState] = useApp()
@@ -87,9 +87,7 @@ export default function DateFilter({ onChange }) {
   return (
     <div className="datefilter" css={datefilterStyle} ref={pickerRef}>
       <div css={inactiveStyle} className={("button1" + (state.active ? " active" : ""))} onClick={activateDatePicker}>
-        <Icon>
-          <DateSVG />
-        </Icon>
+        <Icon icon={faCalendar} />
         <div className="dateDisplay">{date.formatDateShort(state.dates.startDate)}</div>-
         <div className="dateDisplay">{date.formatDateShort(state.dates.endDate)}</div>
       </div>

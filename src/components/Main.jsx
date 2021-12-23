@@ -27,7 +27,7 @@ const Main = () => {
             <Route path="/" element={<Home />} />
           </Routes>
           <div className="control">
-
+            
           </div>
         </div>
       </div>

@@ -3,9 +3,6 @@ import {
     registerables
 } from 'chart.js';
 
-import 'chartjs-adapter-date-fns'
-
-
 const RegisterChart = {
     register: () => {
         return ChartJS.register(
