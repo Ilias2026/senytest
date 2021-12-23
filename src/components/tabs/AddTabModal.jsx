@@ -77,7 +77,7 @@ const AddTabModal = ({ onClose }) => {
                     {
                         newPRSchema.options.map((option, i) => {
                             return (
-                                <label key={option.key} className={'button1 addOption' + (state.selected[option.key] ? ' active' : '')}>
+                                <label key={option.key} className={'engage addOption' + (state.selected[option.key] ? ' active' : '')}>
                                     <input hidden type="checkbox" name={option.key} value={option.name} checked={state.selected[option.key] || false}
                                         onChange={() => {
                                             optionChange(option)

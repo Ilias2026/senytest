@@ -23,7 +23,7 @@ const Insights = () => {
     serverLoaded: false,
   })
   const [dateState] = useDate()
-  const [appState, setAppState] = useApp()
+  const [appState] = useApp()
   const params = useParams()
   const { _id } = params;
   const tab = appState.tabs && appState.tabs.find(tab => tab._id === _id)
@@ -89,15 +89,22 @@ const Insights = () => {
       const metricInfo = getPRInfo(metrics[dataIndex])
       const metricType = (metricInfo && metricInfo.type) || 'count'; // count default (could be time)
       const parser = newPRSchema.parsers[metricType]
+
+      let count = 0
+      let perCount = 0
       for (let i = 0; i < maxDataCount; i++) {
         const accrossData = calculated.reduce((prev, curr, repoIndex) => {
           let value = parser(curr.values[i].values[dataIndex]) || 0;
           reposData[repoIndex] += value;
           return prev + value
         }, 0)
+        count += accrossData
+        perCount += 1
         if (i % step === 0 || i === maxDataCount - 1) {
           timeLabels.push(date.formatDateSmall(maxDataArray.values[i].date))
-          timeData.push(accrossData)
+          // timeData.push(accrossData)
+          timeData.push(count / perCount)
+          count = perCount = 0
         }
         total += accrossData;
       }
@@ -209,11 +216,11 @@ const Insights = () => {
                   </div>
                 </div>
                 <div className='kpiCon'>
-                  <div className='kpi button1'>
+                  <div className='kpi engage'>
                     <span>Average</span>
                     <span>{simplifier ? simplifier(state.average) : Number(state.average).toFixed(2)}</span>
                   </div>
-                  <div className='kpi button1'>
+                  <div className='kpi engage'>
                     <span>Average Per Repo</span>
                     <span>{simplifier ? simplifier(state.averagePerRep) : Number(state.averagePerRep).toFixed(2)}</span>
                   </div>

@@ -18,7 +18,7 @@ const Icon = (props) => {
 
 const iconStyle = () => {
     return css`
-    font-size: 1.2em;
+    
     `
 }
 

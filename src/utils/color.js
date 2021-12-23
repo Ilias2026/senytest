@@ -28,6 +28,7 @@ const colors = [
  * @param {number} size 
  */
 function getRandomColors(size) {
+    // return new Array(size).fill(0).map(x => generateRandomDarkColor())
     return colors.sort((a, b) => Math.random() - Math.random()).slice(0, size)
 }
 

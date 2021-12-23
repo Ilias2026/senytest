@@ -3,15 +3,17 @@ import { css } from "@emotion/react";
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import useApp from "../hooks/useApp";
 import constaintsStyles from "../styles/constants";
 import date from "../utils/date";
 import useDate from "../hooks/useDate";
 import Icon from "./global/icons/Icon";
 import { faCalendar } from '@fortawesome/free-regular-svg-icons'
 
+/*
+we're using a library called react-date-range to provide a date range picker.
+*/
+
 export default function DateFilter({ onChange }) {
-  const [appState, setAppState] = useApp()
   const [dateState, setDateState] = useDate();
   const [state, setState] = React.useState({
     dates: {
@@ -20,16 +22,25 @@ export default function DateFilter({ onChange }) {
     },
   });
 
-  const interval = 1000 * 60 * 60 * 24 * 30 * 3;
+  const interval = 1000 * 60 * 60 * 24 * 30 * 3; //for 3 months to limit the number of requests
   const currDate = new Date();
-  const minDate = new Date(currDate.getTime() - interval);
-  const fixedInterval = [minDate, currDate];
   const pickerRef = React.useRef();
 
+  /**
+   * check if date is in allowed range
+   * @param {Date} date1 
+   * @param {Date} date2 
+   * @returns {Boolean}
+   */
   const isDateRangeValid = (date1, date2) => {
     return date2.getTime() - date1.getTime() <= interval;
   };
 
+  /**
+   * handles input change and updates current state
+   * @param {Object} data 
+   * @returns 
+   */
   const handleChange = (data) => {
     const { dates } = data;
     const { startDate, endDate } = dates;
@@ -42,6 +53,9 @@ export default function DateFilter({ onChange }) {
     });
   };
 
+  /**
+   * shows datepicker after a click
+   */
   const activateDatePicker = () => {
     setState((prevState) => {
       return {
@@ -51,6 +65,12 @@ export default function DateFilter({ onChange }) {
     });
   };
 
+  /**
+   * hides datepicker after a click outside
+   * @param {Event} e 
+   * @param {Boolean} always 
+   * @returns 
+   */
   const deactivateDatePicker = (e, always = false) => {
     if (!always) {
       let { target } = e;
@@ -67,6 +87,11 @@ export default function DateFilter({ onChange }) {
       };
     });
   };
+
+  /**
+   * triggers onChange callback after the apply buton is clicked
+   * @param {Event} e 
+   */
   const _onChange = (e) => {
     deactivateDatePicker(null, true)
     setDateState(prevState => {
@@ -78,6 +103,9 @@ export default function DateFilter({ onChange }) {
     typeof onChange === "function" && onChange();
   };
 
+  /**
+   * add event listeners to the document
+   */
   React.useEffect(() => {
     document.addEventListener("click", deactivateDatePicker);
     return () => {
@@ -97,8 +125,7 @@ export default function DateFilter({ onChange }) {
             <DateRangePicker
               ranges={[state.dates]}
               onChange={handleChange}
-              // minDate={fixedInterval[0]}
-              maxDate={fixedInterval[1]}
+              maxDate={currDate}
               showDateDisplay={false}
               color={constaintsStyles.colorOrange1}
               rangeColors={[constaintsStyles.colorOrange1]}
