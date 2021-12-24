@@ -6,7 +6,7 @@ import AddTabButton from './AddTabButton';
 import Tab from './Tab';
 
 /*
-just a list of tabs consumed for app state
+just a list of tabs consumed from app state
 */
 
 const Tabs = ({ children }) => {
