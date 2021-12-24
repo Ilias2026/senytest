@@ -3,6 +3,10 @@ import React from 'react';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons'
 import Icon from '../icons/Icon';
 
+/*
+a simple, animated icon for simulating a loader
+*/
+
 const SimpleLoader = () => {
     return (
         <div css={loaderStyle}>

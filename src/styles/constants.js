@@ -1,3 +1,7 @@
+/**
+ * we define global css styles
+ */
+
 const inputContainer = `
     .inputContainer {
         display: flex;

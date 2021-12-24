@@ -1,6 +1,10 @@
 import { css } from '@emotion/react';
 import React from 'react';
 
+/*
+using css hover we show a tooltip when hovering over the children {probably Icon}
+*/
+
 const Tooltip = ({ children, message }) => {
     return (
         <div css={tooltipStyle}>

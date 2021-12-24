@@ -16,19 +16,23 @@ import getPRInfo from '../../dataSchema/getPRInfo';
 import newPRSchema from '../../dataSchema/newPRSchema';
 const { lightShadow } = constaintsStyles;
 
+//register dependecies for chartjs 3.0.0+
 RegisterChart.register()
 
 const Insights = () => {
   const [state, setState] = React.useState({
     serverLoaded: false,
   })
+  //we consume date state and app state
   const [dateState] = useDate()
   const [appState] = useApp()
   const params = useParams()
   const { _id } = params;
+  //retrieve tabs info from app state
   const tab = appState.tabs && appState.tabs.find(tab => tab._id === _id)
 
   React.useEffect(() => {
+    //in case a tab is unavailable, we mount a notFound component
     if (!tab) {
       setState(prevState => {
         return {
@@ -40,6 +44,7 @@ const Insights = () => {
       return false;
     }
 
+    //set serverLoaded to false to show a loader until the server responds
     setState(prevState => {
       return {
         ...prevState,
@@ -54,6 +59,7 @@ const Insights = () => {
       "github.com/athenianco/metadata"
     ]
 
+    //start fetching data from the server
     network.post("https://api.athenian.co/v1/metrics/pull_requests", {
       for: [
         {
@@ -67,49 +73,76 @@ const Insights = () => {
       granularities: ["day"],
       exclude_inactive: true,
       account: 1,
-      timezone: dateState.offset
+      timezone: dateState.offset || 0
     }).then(data => {
       //map reduce the data
       const { metrics, calculated } = data;
+      //we calculate the days between the start and end date to know how many days we have to iterate
       const daysInterval = date.calculateDaysInterval(data.date_to, data.date_from)
+      
+      //this tells us how many dates will be visible in the charts (we may see an extra day if the range is not a multiple of maxLabelCount)
       const maxLabelCount = 4
+
+      //this is just to tell us the maximum data count from the repos (in case there's a mismatch)
       const maxDataArray = calculated.reduce((prev, c) => (c.values.length > prev.values.length) ? c : prev, { values: [] })
       const maxDataCount = maxDataArray.values.length
+
+      //we calculate the step in which we show data in the charts
       const step = Math.ceil(daysInterval / maxLabelCount)
 
       const timeLabels = []
       const timeData = []
 
-      const reposLabels = calculated.map(c => c.for.repositories[0].split('/').slice(2).join('/'))
+      //get a readable form of repos urls
+      const reposLabels = calculated.map(c => c.for.repositories[0].split('/').slice(1).join('/'))
+
+      //an array that weill have the repos average data
       const reposData = new Array(reposLabels.length).fill(0)
 
       let total = 0
 
       const dataIndex = 0
       const metricInfo = getPRInfo(metrics[dataIndex])
+
       const metricType = (metricInfo && metricInfo.type) || 'count'; // count default (could be time)
+
+      //we get the time from the server as a string (exp: 1222s) so we use the type time to get parsed
       const parser = newPRSchema.parsers[metricType]
 
+      //we use these variables to calculate the average in each interval of time step
       let count = 0
       let perCount = 0
+
+
       for (let i = 0; i < maxDataCount; i++) {
+
+        //sum the current value from all repos
         const accrossData = calculated.reduce((prev, curr, repoIndex) => {
+          //we get the value using the parser (we need this for time because we get string from the server)
           let value = parser(curr.values[i].values[dataIndex]) || 0;
+
+          //we add the value for each concerned repo
           reposData[repoIndex] += value;
-          return prev + value
+          return prev + value //this is the total from all repos
         }, 0)
         count += accrossData
         perCount += 1
+
+        //if we reach the step, we add the average to the timeLabels and timeData
         if (i % step === 0 || i === maxDataCount - 1) {
           timeLabels.push(date.formatDateSmall(maxDataArray.values[i].date))
           // timeData.push(accrossData)
           timeData.push(count / perCount)
+
+          //we reset the count and perCount for the next step
           count = perCount = 0
         }
         total += accrossData;
       }
       const repoAverage = reposData.map(x => x / maxDataCount);
       const averageData = total / maxDataCount
+
+      //set the final state
       setState(prevState => {
         return {
           ...prevState,
@@ -127,8 +160,9 @@ const Insights = () => {
       })
     })
 
-  }, [params, dateState])
+  }, [params, dateState, tab])
 
+  //chartjs options
   const options = {
     responsive: true,
     tension: .3,
@@ -139,6 +173,7 @@ const Insights = () => {
     }
   }
 
+  //we get the metric type to show a friendly information (exp: time => 2H 12M 3S)
   let simplifier;
   if (state.metricInfo) {
     //set simplifier for current metric

@@ -4,13 +4,17 @@ const countParser = (value) => {
     return value;
 }
 
+//we parse time with parseInt
 const timeParser = (value) => {
     return parseInt(value)
 }
 
+//we simplify time with a function readableSeconds
 const timeSimplifier = (value) => {
     return date.readableSeconds(value);
 }
+
+//schema for all Pull Requests metrics
 
 const newPRSchema = {
     options: [

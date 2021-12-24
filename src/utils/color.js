@@ -1,3 +1,4 @@
+//really random colors
 function generateRandomDarkColor() {
     const letters = '0123456789ABCDEF';
     const firstOffset = 1
@@ -29,6 +30,7 @@ const colors = [
  */
 function getRandomColors(size) {
     // return new Array(size).fill(0).map(x => generateRandomDarkColor())
+    //we use colors array because generateRandomDarkColor generated som ugly colors
     return colors.sort((a, b) => Math.random() - Math.random()).slice(0, size)
 }
 

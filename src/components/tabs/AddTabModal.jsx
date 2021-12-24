@@ -11,13 +11,24 @@ import { useNavigate } from 'react-router-dom';
 import Icon from '../global/icons/Icon';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons'
 
+/*
+Modal for adding new tabs
+*/
+
+/**
+ * 
+ * @param {Object} props
+ * @param {CallableFunction} props.onClose - function to close the modal
+ * @returns 
+ */
 const AddTabModal = ({ onClose }) => {
     const navigate = useNavigate()
     const [state, setState] = React.useState({
         selected: {}
     })
-    const [appState, setAppState] = useApp()
+    const [, setAppState] = useApp()
 
+    //handling name state change
     const nameChange = (e) => {
         const { value: name } = e.target;
         setState(prevState => {
@@ -25,6 +36,7 @@ const AddTabModal = ({ onClose }) => {
         })
     }
 
+    //handling metric state change
     const optionChange = (option) => {
         const { key, name } = option
         setState(prevState => {
@@ -39,20 +51,27 @@ const AddTabModal = ({ onClose }) => {
         })
     }
 
-    const addNewTab = () => {
+    //handling submit
+    const addNewTab = (e) => {
+        e.preventDefault(); //prevent form from redirecting
         if (!state.name || !state.name.trim()) {
             return false;
         }
+
+        //we get chosen metrics from state (for this case there's only one)
         const chosenMetrics = Object.entries(state.selected).filter(entry => !!entry[1]).map(entry => entry[0])
         if (!chosenMetrics.length) {
             return false;
         }
         const newTab = {
-            _id: flake.gen(),
+            _id: flake.gen(), //generating a random id for each tab using flakeid
             name: state.name.trim(),
             metrics: chosenMetrics
         }
-        addTab(newTab) //add tab to local storage
+        //store tab in local storage
+        addTab(newTab) 
+
+        //update app state to render new tab
         setAppState(prevState => {
             return {
                 ...prevState,
@@ -62,13 +81,17 @@ const AddTabModal = ({ onClose }) => {
                 ]
             }
         })
+
+        //navigate to the new tab
         navigate('/insight/' + newTab._id)
+
+        //call onClose CallableFunction to dismiss modal
         onClose()
     }
 
     return (
         <Modal onClose={onClose}>
-            <div css={addContainerStyle}>
+            <form css={addContainerStyle} onSubmit={addNewTab}>
                 <h2 className='title'>Adding new Metric</h2>
                 <label className='inputContainer'>
                     Name: <input className='input' autoFocus name="name" value={state.name || ""} onChange={nameChange} />
@@ -92,9 +115,9 @@ const AddTabModal = ({ onClose }) => {
                     }
                 </div>
                 <div>
-                    <button className='button1 addButton' onClick={addNewTab}>Add new</button>
+                    <button className='button1 addButton' type="submit">Add new</button>
                 </div>
-            </div>
+            </form>
         </Modal>
     )
 }

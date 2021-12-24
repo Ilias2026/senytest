@@ -38,6 +38,7 @@ function formatDateHTML(date) {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
 
+//calculate the number of a time unit is in provided seconds (exp: how many hours are in 7200 seconds => 2 hours)
 function getTimeCase(time, divider) {
     const offset = time - (time % divider)
     return {
@@ -47,7 +48,7 @@ function getTimeCase(time, divider) {
 }
 
 /**
- * 
+ * make time seconds readable in hours, minutes and seconds
  * @param {number} time time in seconds
  */
 function readableSeconds(time) {

@@ -2,6 +2,10 @@ import { css } from '@emotion/react';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+/*
+<Icon> Component is wrapper for FontAwesomeIcon
+*/
+
 const Icon = (props) => {
     const options = {
         icon: props.icon,

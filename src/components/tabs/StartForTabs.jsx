@@ -5,6 +5,10 @@ import useApp from '../../hooks/useApp';
 import Icon from "../global/icons/Icon";
 import { faArrowAltCircleUp } from '@fortawesome/free-regular-svg-icons'
 
+/*
+just a welcome message
+*/
+
 const StartForTabs = () => {
     const [appState] = useApp()
     const isNew = !appState.tabs || !appState.tabs.length;

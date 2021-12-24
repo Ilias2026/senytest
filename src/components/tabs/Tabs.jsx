@@ -5,8 +5,12 @@ import useApp from '../../hooks/useApp';
 import AddTabButton from './AddTabButton';
 import Tab from './Tab';
 
+/*
+just a list of tabs consumed for app state
+*/
+
 const Tabs = ({ children }) => {
-  const [appState, setAppState] = useApp()
+  const [appState] = useApp()
   const params = useParams()
   const { _id } = params;
   return (

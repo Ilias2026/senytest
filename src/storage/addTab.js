@@ -1,7 +1,7 @@
 import readTabs from "./readTabs";
 
 /**
- * 
+ * adds a new tab to localstorage
  * @param {Object} tab 
  * @param {string} tab._id
  * @param {string[]} tab.metrics

@@ -9,24 +9,28 @@ import useApp from '../../hooks/useApp';
 import refreshTabs from '../../storage/refreshTabs';
 import { useNavigate } from 'react-router-dom';
 
-import constaintsStyles from '../../styles/constants';
-const { red2 } = constaintsStyles;
+/*
+tab button
+*/
 
 const Tab = ({ tab, active }) => {
     const [appState, setAppState] = useApp()
     const [state, setState] = React.useState({})
     const navigate = useNavigate()
 
+    //we handle click on delete to just open a modal for confirmation
     const handleClickDelete = (e) => {
         e.preventDefault()
         e.stopPropagation()
         setState(prevState => ({ ...prevState, isDeleting: true }))
     }
 
+    //when the user cancels we hide the modal
     const hideModal = () => {
         setState(prevState => ({ ...prevState, isDeleting: false }))
     }
 
+    //this is when the user confirms deleting a tab
     const deleteTab = () => {
         const newTabs = appState.tabs.filter(x => x._id !== tab._id)
         setAppState(prevState => ({ ...prevState, tabs: newTabs }))
@@ -92,7 +96,7 @@ const modalStyle = () => {
     }
 
     & .deleteButton {
-        background-color: ${red2};
+        background-color: #222;
         color: white;
     }
     `
