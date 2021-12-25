@@ -1,6 +1,19 @@
 const currDate = new Date()
 const currYear = currDate.getFullYear()
 
+/**
+ * 
+ * @param {any} date 
+ * @returns {Date}
+ */
+function checkDate(date) {
+    if (!date) return false
+    if (!(date instanceof Date)) {
+        date = new Date(date)
+    }
+    return date
+}
+
 function calculateDaysInterval(date1, date2) {
     return (new Date(date1) - new Date(date2)) / (1000 * 60 * 60 * 24)
 }
@@ -10,17 +23,12 @@ function formatDateShort(date, options = {
     month: 'short',
     day: 'numeric'
 }) {
-    if (!date) return ''
-    if (!(date instanceof Date)) {
-        date = new Date(date)
-    }
+    if(!(date = checkDate(date))) return ''
     return date.toLocaleString('en-US', options);
 }
 
 function formatDateSmall(date) {
-    if (!(date instanceof Date)) {
-        date = new Date(date)
-    }
+    if(!(date = checkDate(date))) return ''
     if (date.getFullYear() === currYear) {
         return formatDateShort(date, {
             month: 'short',
@@ -31,10 +39,7 @@ function formatDateSmall(date) {
 }
 
 function formatDateHTML(date) {
-    if (!date) return ''
-    if (!(date instanceof Date)) {
-        date = new Date(date)
-    }
+    if(!(date = checkDate(date))) return ''
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
 
@@ -58,12 +63,20 @@ function readableSeconds(time) {
     return `${hours.t}H ${minutes.t}M ${seconds.t}S`
 }
 
+
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+function getDayName(date) {
+    if(!(date = checkDate(date))) return ''
+    return days[date.getDay()]
+}
+
 const date = {
     calculateDaysInterval,
     formatDateShort,
     formatDateSmall,
     formatDateHTML,
-    readableSeconds
+    readableSeconds,
+    getDayName,
 }
 
 export default date;

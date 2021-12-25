@@ -79,7 +79,7 @@ const Insights = () => {
       const { metrics, calculated } = data;
       //we calculate the days between the start and end date to know how many days we have to iterate
       const daysInterval = date.calculateDaysInterval(data.date_to, data.date_from)
-      
+
       //this tells us how many dates will be visible in the charts (we may see an extra day if the range is not a multiple of maxLabelCount)
       const maxLabelCount = 4
 
@@ -130,9 +130,20 @@ const Insights = () => {
 
         //if we reach the step, we add the average to the timeLabels and timeData
         if (i % step === 0 || i === maxDataCount - 1) {
-          timeLabels.push(date.formatDateSmall(maxDataArray.values[i].date))
+          /**
+           * @type {Date}
+           */
+          let _date = new Date(maxDataArray.values[i].date)
+          let day = date.getDayName(_date)
+          let _dateStr = date.formatDateSmall(_date);
+          timeLabels.push()
           // timeData.push(accrossData)
-          timeData.push(count / perCount)
+          timeData.push({
+            y: count / perCount,
+            x: _dateStr,
+            date: _date,
+            day,
+          })
 
           //we reset the count and perCount for the next step
           count = perCount = 0
@@ -173,25 +184,32 @@ const Insights = () => {
     }
   }
 
+  const lineOptions = { ...options }
   //we get the metric type to show a friendly information (exp: time => 2H 12M 3S)
   let simplifier;
   if (state.metricInfo) {
     //set simplifier for current metric
     simplifier = newPRSchema.simplifiers[state.metricInfo.type]
-    if (simplifier) {
-      options.plugins.tooltip = {
-        enabled: true,
-        usePointStyle: true,
-        callbacks: {
-          // To change title in tooltip
-          // title: (data) => { return data[0].parsed.x },
 
-          // To change label in tooltip
-          label: (data) => {
-            return simplifier(data.parsed.y)
-          }
-        },
+    lineOptions.plugins.tooltip = {
+      enabled: true,
+      usePointStyle: true,
+      callbacks: {
+
+      },
+    }
+
+    // To change label in tooltip
+    if (simplifier) {
+      lineOptions.plugins.tooltip.callbacks.label = (data) => {
+        return simplifier(data.parsed.y)
       }
+    }
+
+    // To change title in tooltip
+    lineOptions.plugins.tooltip.callbacks.title = (data) => {
+      let day = data[0].raw.day
+      return day
     }
   }
   return (
@@ -211,7 +229,7 @@ const Insights = () => {
                 <div className='charts'>
                   <div>
                     <Line
-                      options={options}
+                      options={lineOptions}
                       data={{
                         labels: state.timeLabels || [],
                         datasets: [

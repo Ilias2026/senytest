@@ -7,5 +7,5 @@ docker build . -t webapp
 
 ## running docker image
 ```
-docker run -p 127.0.0.1:3000:3000 webapp
+docker-compose -f docker-compose.dev.yml up
 ```
