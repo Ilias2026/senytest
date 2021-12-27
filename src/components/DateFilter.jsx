@@ -145,6 +145,7 @@ const datefilterStyle = () => {
     width: fit-content;
     margin: 0 0px 0 auto;
     & .datepicker {
+      z-index: 1;
       position: absolute;
       right: 20px;
       box-shadow: 0px 2px 4px 0px #ddd;
